@@ -69,4 +69,9 @@ public class UserServiceImpl implements UserService {
         user.setUserRoles(userRoles);
         return userMapper.toDto(userRepository.save(user));
     }
+
+    @Override
+    public UserResponse getUserById(Long id) {
+        return userMapper.toDto(userRepository.findById(id).orElse(null));
+    }
 }
