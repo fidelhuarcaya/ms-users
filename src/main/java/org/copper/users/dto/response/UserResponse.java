@@ -1,5 +1,6 @@
 package org.copper.users.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.copper.users.entity.Role;
 
@@ -13,6 +14,9 @@ public class UserResponse {
     private String lastName;
     private String email;
     private List<Role> roles;
+    private StatusResponse status;
+
+    @JsonFormat(pattern = "dd/MM/yyy hh:mm:ss")
     private LocalDateTime createdDate;
 }
 
