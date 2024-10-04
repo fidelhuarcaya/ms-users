@@ -5,4 +5,7 @@ RUN mvn -f /home/app/pom.xml clean package -DskipTests
 
 FROM openjdk:17-jdk-alpine
 COPY --from=build /home/app/target/ms-users-0.0.1-SNAPSHOT.jar ms-users-0.0.1.jar
+
+ENV PORT 8080
+EXPOSE ${PORT}
 ENTRYPOINT ["java","-jar","/ms-users-0.0.1.jar"]
