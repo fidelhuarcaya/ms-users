@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponse createUser(UserRequest userRequest) {
-        userRequest.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        userRequest.setPassword(passwordEncoder.encode(userRequest.getName().toLowerCase()));
 
         Status status = statusRepository.findByCode(StatusCode.ACTIVE).orElseThrow(()->new RequestException("No existe el estado."));
         User user = userMapper.toEntity(userRequest);

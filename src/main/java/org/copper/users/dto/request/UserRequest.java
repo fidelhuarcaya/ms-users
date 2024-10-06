@@ -20,7 +20,6 @@ public class UserRequest {
     @NotBlank(message = "Email cannot be blank")
     private String email;
 
-    @NotBlank(message = "Password cannot be blank")
     private String password;
 
     private List<Integer> roleIds;

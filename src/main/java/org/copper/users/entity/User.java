@@ -39,9 +39,12 @@ public class User extends Auditable  implements UserDetails {
     @JoinColumn(name = "status_id", nullable = false)
     private Status status;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<UserRole> userRoles;
 
+    public String getFullName() {
+        return name + " " + (lastName != null ? lastName : "") + " " + (secondLastName != null ? secondLastName : "");
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return userRoles.stream().map(role ->
