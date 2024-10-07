@@ -15,14 +15,11 @@ import org.copper.users.mapper.UserMapper;
 import org.copper.users.repository.RoleRepository;
 import org.copper.users.repository.StatusRepository;
 import org.copper.users.repository.UserRepository;
-import org.copper.users.repository.UserRoleRepository;
-import org.copper.users.service.status.StatusService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

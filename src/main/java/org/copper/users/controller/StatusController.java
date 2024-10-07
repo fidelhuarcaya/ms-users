@@ -19,7 +19,7 @@ public class StatusController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    private ResponseEntity<List<StatusResponse>> getAll(){
+    public ResponseEntity<List<StatusResponse>> getAll(){
         return ResponseEntity.ok(statusService.getAll());
     }
 }
