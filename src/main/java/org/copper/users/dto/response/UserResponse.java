@@ -1,6 +1,7 @@
 package org.copper.users.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
 import lombok.Data;
 import org.copper.users.entity.Role;
 
@@ -10,6 +11,7 @@ import java.util.List;
 @Data
 public class UserResponse {
     private Long id;
+    private String dni;
     private String name;
     private String lastName;
     private String email;
