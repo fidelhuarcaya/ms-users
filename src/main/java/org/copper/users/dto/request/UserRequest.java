@@ -9,6 +9,9 @@ import java.util.List;
 @Data
 public class UserRequest {
 
+    private Long id;
+    private String dni;
+
     @NotBlank(message = "Name cannot be blank")
     private String name;
 
@@ -22,6 +25,7 @@ public class UserRequest {
 
     private String password;
 
-    private List<Integer> roleIds;
+    private Integer roleId;
+    private Integer statusId;
 }
 

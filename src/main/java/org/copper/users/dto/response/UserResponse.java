@@ -20,6 +20,6 @@ public class UserResponse {
     private StatusResponse status;
 
     @JsonFormat(pattern = "dd/MM/yyy hh:mm:ss")
-    private LocalDateTime createdDate;
+    private LocalDateTime createdAt;
 }
 

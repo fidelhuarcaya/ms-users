@@ -12,7 +12,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-
+    @Mapping(target = "status.id", source = "statusId")
     User toEntity(UserRequest userRequest);
 
     @Mapping(target = "roles", source = "userRoles")

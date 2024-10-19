@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponse createUser(UserRequest userRequest) {
-        userRequest.setPassword(passwordEncoder.encode(userRequest.getName().toLowerCase()));
+        userRequest.setPassword(passwordEncoder.encode(userRequest.getDni().toLowerCase()));
 
         Status status = statusRepository.findByCode(StatusCode.ACTIVE).orElseThrow(()->new RequestException("No existe el estado."));
         User user = userMapper.toEntity(userRequest);
@@ -61,27 +61,41 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserResponse updateUser(Long id, UserRequest userRequest) {
-        if (!userRepository.existsById(id)) {
-            throw new RequestException("Usuario no existe");
-        }
-        User user = userMapper.toEntity(userRequest);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RequestException("Usuario no existe"));
+        List<UserRole> userRoles = user.getUserRoles();
+        String password = user.getPassword();
+        user = userMapper.toEntity(userRequest);
         user.setId(id);
+        user.setUserRoles(userRoles);
+        user.setPassword(password);
 
-        List<UserRole> userRoles = userRequest.getRoleIds().stream().map(roleId -> {
+        Role newRole = roleRepository.findById(userRequest.getRoleId())
+                .orElseThrow(() -> new RequestException("Rol no existe"));
+
+        // Verificar si el usuario ya tiene el rol
+        boolean roleExists = userRoles.stream()
+                .anyMatch(ur -> ur.getRole().getId().equals(newRole.getId()));
+
+        if (!roleExists) {
+            // Si el rol no existe, agregarlo
             UserRole userRole = new UserRole();
             userRole.setUser(user);
-            Role role = new Role();
-            role.setId(roleId);
-            userRole.setRole(role);
-            return userRole;
-        }).toList();
-        user.setUserRoles(userRoles);
+            userRole.setRole(newRole);
+            user.getUserRoles().add(userRole);
+        }
+
+        // Eliminar roles que ya no están en la solicitud
+        user.getUserRoles().removeIf(ur -> !ur.getRole().getId().equals(newRole.getId()));
+
         return userMapper.toDto(userRepository.save(user));
     }
 
     @Override
     public UserResponse getUserById(Long id) {
-        return userMapper.toDto(userRepository.findById(id).orElse(null));
+        return userMapper
+                .toDto(userRepository.findById(id).orElse(null));
     }
 }

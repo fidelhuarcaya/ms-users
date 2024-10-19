@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = {"email", "dni"}))
-public class User extends Auditable  implements UserDetails {
+public class User extends Auditable implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
