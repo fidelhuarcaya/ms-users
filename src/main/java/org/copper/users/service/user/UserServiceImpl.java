@@ -36,20 +36,17 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserResponse createUser(UserRequest userRequest) {
         userRequest.setPassword(passwordEncoder.encode(userRequest.getDni().toLowerCase()));
-
-        Status status = statusRepository.findByCode(StatusCode.ACTIVE).orElseThrow(()->new RequestException("No existe el estado."));
         User user = userMapper.toEntity(userRequest);
-        user.setStatus(status);
 
         List<UserRole> userRoleList = new ArrayList<>();
         UserRole userRole = new UserRole();
         userRole.setUser(user);
-        Role role = roleRepository.findByCode(RoleCode.USER).orElseThrow(() -> new RuntimeException("El role no existe"));
+        Role role = roleRepository.findById(userRequest.getRoleId())   .orElseThrow(() -> new RuntimeException("El role no existe"));
         userRole.setRole(role);
         userRoleList.add(userRole);
         user.setUserRoles(userRoleList);
-        user = userRepository.save(user);
-        return userMapper.toDto(user);
+
+        return userMapper.toDto(userRepository.save(user));
     }
 
     @Override
@@ -96,6 +93,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserById(Long id) {
         return userMapper
-                .toDto(userRepository.findById(id).orElse(null));
+                .toDto(userRepository.findById(id).orElseThrow(()-> new RequestException("El usuario no existe")));
     }
 }

@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserResponse> getUserById(@PathVariable("id") Long id) {
         UserResponse userResponse = userService.getUserById(id);
         return ResponseEntity.ok(userResponse);
     }
@@ -37,7 +37,6 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<UserResponse> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
