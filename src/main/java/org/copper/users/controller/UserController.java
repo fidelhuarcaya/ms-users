@@ -47,4 +47,11 @@ public class UserController {
         UserResponse userResponse = userService.updateUser(id, userRequest);
         return ResponseEntity.ok(userResponse);
     }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER', 'BASIC', 'PREMIUM')")
+    @GetMapping("/{email}")
+    public ResponseEntity<UserResponse> getUserByEmail(@PathVariable("email") String email) {
+        UserResponse userResponse = userService.getUserByEmail(email);
+        return ResponseEntity.ok(userResponse);
+    }
 }

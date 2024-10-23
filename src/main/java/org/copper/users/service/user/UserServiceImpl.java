@@ -95,4 +95,10 @@ public class UserServiceImpl implements UserService {
         return userMapper
                 .toDto(userRepository.findById(id).orElseThrow(()-> new RequestException("El usuario no existe")));
     }
+
+    @Override
+    public UserResponse getUserByEmail(String email) {
+        return userMapper
+                .toDto(userRepository.findByEmail(email).orElseThrow(()-> new RequestException("El usuario no existe")));
+    }
 }
