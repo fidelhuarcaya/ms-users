@@ -28,12 +28,6 @@ public class UserController {
         return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable("id") Long id) {
-        UserResponse userResponse = userService.getUserById(id);
-        return ResponseEntity.ok(userResponse);
-    }
-
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
@@ -49,9 +43,18 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER', 'BASIC', 'PREMIUM')")
-    @GetMapping("/{email}")
-    public ResponseEntity<UserResponse> getUserByEmail(@PathVariable("email") String email) {
-        UserResponse userResponse = userService.getUserByEmail(email);
+    @GetMapping("/search")
+    public ResponseEntity<UserResponse> getUser(@RequestParam(value = "email", required = false) String email,
+                                                       @RequestParam(value = "id", required = false) Long id) {
+        UserResponse userResponse;
+        if (email != null) {
+            userResponse = userService.getUserByEmail(email);
+        } else if (id != null) {
+            userResponse = userService.getUserById(id);
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(userResponse);
     }
+
 }
