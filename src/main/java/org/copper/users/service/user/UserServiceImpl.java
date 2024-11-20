@@ -72,23 +72,20 @@ public class UserServiceImpl implements UserService {
         Role newRole = roleRepository.findById(userRequest.getRoleId())
                 .orElseThrow(() -> new RequestException("Rol no existe"));
 
-        // Verificar si el usuario ya tiene el rol
         boolean roleExists = userRoles.stream()
                 .anyMatch(ur -> ur.getRole().getId().equals(newRole.getId()));
 
         if (!roleExists) {
-            // Si el rol no existe, agregarlo
             UserRole userRole = new UserRole();
             userRole.setUser(user);
             userRole.setRole(newRole);
-            user.getUserRoles().add(userRole);
+            user.setUserRoles(List.of(userRole));
         }
-
-        // Eliminar roles que ya no están en la solicitud
-        user.getUserRoles().removeIf(ur -> !ur.getRole().getId().equals(newRole.getId()));
-
+        user.getUserRoles().removeIf(ur -> !userRequest.getRoleId().equals(ur.getRole().getId()));
+        System.out.println(user.getUserRoles());
         return userMapper.toDto(userRepository.save(user));
     }
+
 
     @Override
     public UserResponse getUserById(Long id) {
