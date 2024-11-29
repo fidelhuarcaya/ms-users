@@ -2,12 +2,9 @@ package org.copper.users.service.user;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.copper.users.common.RoleCode;
-import org.copper.users.common.StatusCode;
 import org.copper.users.dto.request.UserRequest;
 import org.copper.users.dto.response.UserResponse;
 import org.copper.users.entity.Role;
-import org.copper.users.entity.Status;
 import org.copper.users.entity.User;
 import org.copper.users.entity.UserRole;
 import org.copper.users.exception.RequestException;
@@ -41,7 +38,8 @@ public class UserServiceImpl implements UserService {
         List<UserRole> userRoleList = new ArrayList<>();
         UserRole userRole = new UserRole();
         userRole.setUser(user);
-        Role role = roleRepository.findById(userRequest.getRoleId())   .orElseThrow(() -> new RuntimeException("El role no existe"));
+        Role role = roleRepository.findById(userRequest.getRoleId())
+                .orElseThrow(() -> new RuntimeException("El role no existe"));
         userRole.setRole(role);
         userRoleList.add(userRole);
         user.setUserRoles(userRoleList);
@@ -62,7 +60,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateUser(Long id, UserRequest userRequest) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RequestException("Usuario no existe"));
-        List<UserRole> userRoles = user.getUserRoles();
+        List<UserRole> userRoles = new ArrayList<>(user.getUserRoles());  // Use a mutable list
         String password = user.getPassword();
         user = userMapper.toEntity(userRequest);
         user.setId(id);
@@ -71,18 +69,17 @@ public class UserServiceImpl implements UserService {
 
         Role newRole = roleRepository.findById(userRequest.getRoleId())
                 .orElseThrow(() -> new RequestException("Rol no existe"));
-
         boolean roleExists = userRoles.stream()
                 .anyMatch(ur -> ur.getRole().getId().equals(newRole.getId()));
-
         if (!roleExists) {
             UserRole userRole = new UserRole();
             userRole.setUser(user);
             userRole.setRole(newRole);
-            user.setUserRoles(List.of(userRole));
+            userRoles.add(userRole);  // Add to mutable list
         }
+
         user.getUserRoles().removeIf(ur -> !userRequest.getRoleId().equals(ur.getRole().getId()));
-        System.out.println(user.getUserRoles());
+
         return userMapper.toDto(userRepository.save(user));
     }
 
@@ -90,12 +87,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserById(Long id) {
         return userMapper
-                .toDto(userRepository.findById(id).orElseThrow(()-> new RequestException("El usuario no existe")));
+                .toDto(userRepository.findById(id).orElseThrow(() -> new RequestException("El usuario no existe")));
     }
 
     @Override
     public UserResponse getUserByEmail(String email) {
         return userMapper
-                .toDto(userRepository.findByEmail(email).orElseThrow(()-> new RequestException("El usuario no existe")));
+                .toDto(userRepository.findByEmail(email).orElseThrow(() -> new RequestException("El usuario no existe")));
     }
 }
